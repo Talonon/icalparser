@@ -155,6 +155,9 @@ class IcalParser {
 		$string = str_replace("\n ", "", $string);
 
 		foreach (explode("\n", $string) as $row) {
+			list($key, $middle, $value) = $this->parseRow($row);
+
+
 
 			switch ($row) {
 				case 'BEGIN:DAYLIGHT':
@@ -167,6 +170,7 @@ class IcalParser {
 				case 'BEGIN:VEVENT':
 					$section = substr($row, 6);
 					$counters[$section] = isset($counters[$section]) ? $counters[$section] + 1 : 0;
+					$callback && call_user_func($callback, $row, $key, $middle, $value, $section, $counters[$section]); // I'd still like to know when these are hit!
 					continue 2; // while
 					break;
 				case 'END:DAYLIGHT':
@@ -178,12 +182,11 @@ class IcalParser {
 				case 'END:VEVENT':
 				case 'END:VTODO':
 				case 'END:VCALENDAR':
+
+					$callback && call_user_func($callback, $row, $key, $middle, $value, $section, $counters[$section]); // I'd still like to know when these are hit!
 					continue 2; // while
 					break;
 			}
-
-			list($key, $middle, $value) = $this->parseRow($row);
-
 
 			if ($callback) {
 				// call user function for processing line
@@ -237,6 +240,9 @@ class IcalParser {
 						} catch (\Exception $e) {
 							$middle[$match['key']] = $match['value'];
 						}
+					}
+					else {
+						$middle[$match['key']] = $match['value'];
 					}
 				}
 			}
