@@ -190,7 +190,7 @@ class IcalParser {
 
 			if ($callback) {
 				// call user function for processing line
-				call_user_func($callback, $row, $key, $middle, $value, $section, $counters[$section]);
+				call_user_func($callback, $row, $key, $middle, $value, $section, isset($counters[$section]) ? $counters[$section] : 0);
 			} else {
 				if ($section === 'VCALENDAR') {
 					$this->data[$key] = $value;
