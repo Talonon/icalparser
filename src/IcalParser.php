@@ -152,7 +152,11 @@ class IcalParser {
 		$string = str_replace("\r\n", "\n", $string);
 
 		// Unfold multi-line strings
-		$string = str_replace("\n ", " ", $string);
+		$parts = explode("\n ", $string);
+		for ($x=0, $c=count($parts); $x<$c; $x++) {
+			$parts[$x] = ltrim($parts[$x]);
+		}
+		$string = implode('', $parts);
 
 		foreach (explode("\n", $string) as $row) {
 			list($key, $middle, $value) = $this->parseRow($row);
